@@ -35,6 +35,8 @@ public class FoodRecipe
 {
     public FoodPartType foodType;
     public int requiredIngredientCount = 2; // Ile składników musi mieć takie danie
+
+    public GameObject baseIngredientPrefab; // Prefab głównego składnika (np. Kebab, Frytobula, Kanapka)
     public GameObject[] ingredientPrefabs; // Prefaby składników dla tego dania
 }
 
@@ -91,6 +93,8 @@ public class FoodComposer : MonoBehaviour, I_Interactable
             usedIngredients.Clear();
             currentFoodType = foodType;
             Debug.Log($"FoodComposer: Zaczynam komponować {foodType}. Wymagane składników: {currentRecipe.requiredIngredientCount}");
+            var mainIngidient = Instantiate(currentRecipe.baseIngredientPrefab, SpawnPoint.position, Quaternion.identity, transform); // Spawnuje główny składnik jako dziecko tego obiektu
+            mainIngidient.tag = "food";
         }
     }
 
