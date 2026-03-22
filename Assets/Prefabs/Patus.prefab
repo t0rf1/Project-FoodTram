@@ -101,11 +101,11 @@ GameObject:
   - component: {fileID: 5922548849186995519}
   - component: {fileID: 3506217455930103502}
   - component: {fileID: -2505357147673571734}
-  - component: {fileID: 4696467770873004454}
+  - component: {fileID: 5405125969872914305}
   - component: {fileID: 736493210151549140}
   - component: {fileID: 2353854274262134624}
   m_Layer: 0
-  m_Name: Npc
+  m_Name: Patus
   m_TagString: Untagged
   m_Icon: {fileID: -5487077368411116049, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -143,9 +143,9 @@ MonoBehaviour:
   - {fileID: 3971103408507255012}
   - {fileID: 1741241629480293232}
   walkoutGood: {fileID: -2505357147673571734}
-  walkOutBad: {fileID: -2505357147673571734}
+  walkOutBad: {fileID: 5405125969872914305}
   npcMannager: {fileID: 0}
-  AngryMetter: 8
+  AngryMetter: 2
   WalkTime: 0
   WalkInTime: 3
   WalkOutTime: 1.5
@@ -270,7 +270,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DefaultWalkout
   npcCore: {fileID: 0}
---- !u!114 &4696467770873004454
+--- !u!114 &5405125969872914305
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -279,11 +279,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 3240234297807013719}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 09031bf33318f934c9ff021ffbed1592, type: 3}
+  m_Script: {fileID: 11500000, guid: 85d0f118e3b0fa045bcdc96b39bf10fe, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WalkOutBad
+  m_EditorClassIdentifier: Assembly-CSharp::PatusJumpSCARE
   npcCore: {fileID: 0}
-  JumpScare: {fileID: 7302000532646512425, guid: c3b2f5761aca35c4686a6be358256cf3, type: 3}
+  JumpScare: {fileID: 3352627522487363770, guid: 0ab144bf9161ce34eaa664516bcc98d9, type: 3}
 --- !u!65 &736493210151549140
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -384,7 +384,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 114981c4902398d44a1ec3d3e57b65ba, type: 2}
+  - {fileID: 2100000, guid: 684e1e2785944ef49aab0119b1ab720a, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

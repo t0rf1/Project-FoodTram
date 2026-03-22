@@ -3,7 +3,7 @@ using System.Collections;
 
 public class Cover : MonoBehaviour,I_Interactable
 {
-    bool isCovered = false;
+    public bool isCovered = false;
     public float coverMoveDistance = 0.5f;
     public float movementDuration = 0.5f; // czas trwania interpolacji (w sekundach)
     private bool isMoving = false; // flaga, żeby uniknąć wielokrotnych ruchów jednocześnie

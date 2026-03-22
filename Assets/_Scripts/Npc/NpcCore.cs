@@ -1,33 +1,29 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum Produkt
-{
-    Kebab, Bula, Paprykaz, napoj
-}
-public enum SubType
-{
-    Kebab_klasyk, Kebab_wege, kebab_kurczak
-    , napoj_kola, napoj_fanta, napoj_sok
-    , none
 
-}
+
 
 [System.Serializable]
 public class Zamowienie
 {
 
-    public Produkt produkt;
-    public SubType subType;
+    public FoodPartType produkt;
+    [ShowIf(nameof(produkt), (int)FoodPartType.Skladnik)]
+    public SkladnikType skladnikType;
 }
 
-public class NpcCore : MonoBehaviour
+public class NpcCore : MonoBehaviour, I_Interactable
 {
+    public List<GameObject> BodyVisuals;
+
     public CustomNpcInteractions walkoutGood;
     public CustomNpcInteractions walkOutBad;
-    
+
+    public CustomNpcInteractions WaitAction;
+
     public NpcMannager npcMannager;
-    public float waitTime;
+    public float AngryMetter;
     public float WalkTime;
     public float WalkInTime;
     public float WalkOutTime;
@@ -43,6 +39,8 @@ public class NpcCore : MonoBehaviour
 
     [SerializeField]
     public List<Zamowienie> zamowienie;
+
+    public HoldedItem heldItem;
 
     // Wobble parameters
     public float wobbleAmplitude = 0.3f;
@@ -62,17 +60,21 @@ public class NpcCore : MonoBehaviour
     [SerializeField] public bool waiting;
     [SerializeField] private float WaitTimer;
 
-    public Produkt GivenProduct;
+    [SerializeField] private int bodyvisualIndex = -1;
+
+    //public FoodPartType GivenProduct;
 
     // Queue management
     private int queueIndex = -1;
 
     // Visual element tracking
     private Vector3 bodyVisualStartLocalPos;
+    bool updatedVisuals = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        GoToNextBodyVisual();
         // Cache the body visual's initial local position
         if (bodyVisual != null)
         {
@@ -82,6 +84,21 @@ public class NpcCore : MonoBehaviour
         StartMovementToTarget(transform.position, TargetPlace, WalkInTime);
     }
 
+    public void GoToNextBodyVisual()
+    {
+        foreach (var visual in BodyVisuals)
+        {
+            visual.SetActive(false);
+        }
+
+        if (bodyvisualIndex < BodyVisuals.Count - 1)
+        {
+            bodyvisualIndex++;
+        }
+        BodyVisuals[bodyvisualIndex].SetActive(true);
+
+
+    }
     public void SetNpcManager(NpcMannager manager)
     {
         npcMannager = manager;
@@ -168,18 +185,34 @@ public class NpcCore : MonoBehaviour
                 //walkoutGood.RunInteraction();
                 StartWalkingOutBehaviour();*/
             }
+            else if (WaitTimer < AngryMetter / 2f && !updatedVisuals)
+            {
+                Debug.Log("NPC is getting angrier! (Halfway there)");
+                GoToNextBodyVisual();
+                updatedVisuals = true; // Reset visuals update flag to allow for "angry" feedback again if timer is extended
+            }
 
-            if (GivenProduct == zamowienie[0].produkt)
+            if(WaitAction!= null)
+            {
+                WaitAction.RunInteraction();
+            }
+            
+            // Here you can add visual feedback for the NPC getting angrier (e.g., change color, play animation)
+            // This is just a placeholder for demonstration
+            
+
+
+            if (heldItem != null && heldItem.itemType == zamowienie[0].produkt)
             {
                 waiting = false;
                 walkoutGood.RunInteraction();
-                
+
             }
 
         }
         else
         {
-            WaitTimer = waitTime;
+            WaitTimer = AngryMetter;
             waiting = true;
         }
 
@@ -251,5 +284,26 @@ public class NpcCore : MonoBehaviour
     public bool ReachPlace()
     {
         return !isMoving && Vector3.Distance(transform.position, targetPosition) < 0.01f;
+    }
+
+    public void Interact()
+    {
+        if (CursorSettings.Instance.heldItem != null)
+        {
+
+            heldItem = CursorSettings.Instance.heldItem;
+            Debug.Log("Grabbed Item: " + heldItem.skladnikType);
+            Debug.Log("Dano: item " + CursorSettings.Instance.heldItem.gameObject.name);
+            CursorSettings.Instance.UpdateHeldItemTexture(); // Aktualizacja tekstury kursora
+            CursorSettings.Instance.heldItem = null; // Czyszczenie trzymanego przedmiotu
+
+
+
+        }
+        else
+        {
+            Debug.Log("Kosz: Nie trzymasz żadnego przedmiotu do wyrzucenia!");
+        }
+
     }
 }

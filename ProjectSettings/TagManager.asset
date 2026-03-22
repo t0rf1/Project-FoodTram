@@ -6,6 +6,8 @@ TagManager:
   tags:
   - food
   - finishedFood
+  - PatusPoint
+  - CoverDetect
   layers:
   - Default
   - TransparentFX

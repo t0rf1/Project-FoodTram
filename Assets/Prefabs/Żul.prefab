@@ -101,11 +101,11 @@ GameObject:
   - component: {fileID: 5922548849186995519}
   - component: {fileID: 3506217455930103502}
   - component: {fileID: -2505357147673571734}
-  - component: {fileID: 4696467770873004454}
+  - component: {fileID: 4721888765619105956}
   - component: {fileID: 736493210151549140}
   - component: {fileID: 2353854274262134624}
   m_Layer: 0
-  m_Name: Npc
+  m_Name: "\u017Bul"
   m_TagString: Untagged
   m_Icon: {fileID: -5487077368411116049, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -144,11 +144,12 @@ MonoBehaviour:
   - {fileID: 1741241629480293232}
   walkoutGood: {fileID: -2505357147673571734}
   walkOutBad: {fileID: -2505357147673571734}
+  WaitAction: {fileID: 4721888765619105956}
   npcMannager: {fileID: 0}
-  AngryMetter: 8
+  AngryMetter: 16
   WalkTime: 0
-  WalkInTime: 3
-  WalkOutTime: 1.5
+  WalkInTime: 1
+  WalkOutTime: 3
   incidentTimeMin: 1
   incidentTimeMax: 3
   walkEanEase:
@@ -249,8 +250,8 @@ MonoBehaviour:
     skladnikType: 0
   heldItem: {fileID: 0}
   wobbleAmplitude: 0.12
-  wobbleFrequency: 4
-  maxTiltAngle: 10.5
+  wobbleFrequency: 6
+  maxTiltAngle: 20
   isMoving: 0
   isIdle: 0
   finished: 0
@@ -270,7 +271,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DefaultWalkout
   npcCore: {fileID: 0}
---- !u!114 &4696467770873004454
+--- !u!114 &4721888765619105956
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -279,11 +280,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 3240234297807013719}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 09031bf33318f934c9ff021ffbed1592, type: 3}
+  m_Script: {fileID: 11500000, guid: 520e24b0adea30a46b40b03dfc460a96, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::WalkOutBad
+  m_EditorClassIdentifier: Assembly-CSharp::ZulAction
   npcCore: {fileID: 0}
-  JumpScare: {fileID: 7302000532646512425, guid: c3b2f5761aca35c4686a6be358256cf3, type: 3}
+  despawnTime: 2
+  panSpeed: 0.2
+  JumpScare: {fileID: 0}
 --- !u!65 &736493210151549140
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -384,7 +387,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 114981c4902398d44a1ec3d3e57b65ba, type: 2}
+  - {fileID: 2100000, guid: e501f4ebf3c579a46a0f352cdbb5cea8, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -433,7 +436,7 @@ Transform:
   m_GameObject: {fileID: 6296435539786315925}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.06, z: 0}
+  m_LocalPosition: {x: 0, y: 0.06, z: 1.92}
   m_LocalScale: {x: 0.68994, y: 0.7822836, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
