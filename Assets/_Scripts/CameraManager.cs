@@ -22,6 +22,15 @@ public class CameraManager : MonoBehaviour
     public CinemachineCamera lowerCamera; // opcjonalna dolna kamera (wejście z środkowej przy S)
     private bool inLowerCamera = false;
 
+    [Header("Cursor Follow")]
+    public bool enableCursorFollow = true; // Czy śledzić kursor
+    public float cursorFollowSpeed = 0.5f; // Szybkość follow (0-1, im mniejszy tym delikatniej)
+    public float cursorFollowMaxOffset = 0.5f; // Maksymalne przesunięcie kamery (jednostki)
+
+    // Przechowywanie bazowych pozycji kamer
+    private Vector3[] cameraBasePositions;
+    private Vector3[] cameraStartPositions; // Początkowe (true) pozycje kamer w edytorze
+
     // Input debounce
     private bool canSwitchCamera = true;
     private float inputCooldown = 0.1f;
@@ -34,30 +43,39 @@ public class CameraManager : MonoBehaviour
             // Próba znalezienia wszystkich aktywnych CinemachineCamera jako dzieci tego obiektu
             virtualCameras = GetComponentsInChildren<CinemachineCamera>(true); // Szuka w dzieciach, uwzględniając nieaktywne
 
-            // Uporządkuj według pozycji w hierarchii (sibling index), żeby zapewnić kolejność: lewo, środek, prawo
+            // Uporządkuj według pozycji w hierarchii (sibling index), żeby zapewnić kolejność: przód, lewo, tył, prawo
             virtualCameras = virtualCameras.OrderBy(c => c.transform.GetSiblingIndex()).ToArray();
         }
 
-        if (virtualCameras == null || virtualCameras.Length != 3) // Oczekujemy dokładnie 3 kamer
+        if (virtualCameras == null || virtualCameras.Length != 4) // Oczekujemy dokładnie 4 kamer
         {
-            Debug.LogWarning("CameraManager: Oczekiwano dokładnie 3 kamer Cinemachine jako dzieci tego obiektu. Przypisz je w inspektorze lub upewnij się, że są dziećmi.");
-            enabled = false; // Wyłącz skrypt, jeśli nie ma 3 kamer
+            Debug.LogWarning("CameraManager: Oczekiwano dokładnie 4 kamer Cinemachine jako dzieci tego obiektu (FrontView, LeftView, BackView, RightView). Przypisz je w inspektorze lub upewnij się, że są dziećmi.");
+            enabled = false; // Wyłącz skrypt, jeśli nie ma 4 kamer
             return;
         }
 
-        // Ustaw środkową kamerę (indeks 1) jako startową — bez efektu przejścia
+        // Ustaw lewą kamerę (indeks 1) jako startową — bez efektu przejścia
         currentIndex = 1;
         
-        // Na starcie ustaw wszystkie kamery z niskim priorytetem, a potem włącz środkową
+        // Na starcie ustaw wszystkie kamery z niskim priorytetem, a potem włącz lewą
         for (int i = 0; i < virtualCameras.Length; i++)
         {
             virtualCameras[i].Priority = inactiveCameraPriority;
             virtualCameras[i].gameObject.SetActive(false);
         }
         
-        // Aktywuj środkową bez blendu
+        // Aktywuj lewą bez blendu
         virtualCameras[1].Priority = activeCameraPriority;
         virtualCameras[1].gameObject.SetActive(true);
+
+        // Przechowaj bazowe pozycje wszystkich kamer do resetowania offsetu cursora
+        cameraBasePositions = new Vector3[virtualCameras.Length];
+        cameraStartPositions = new Vector3[virtualCameras.Length]; // Początkowe pozycje
+        for (int i = 0; i < virtualCameras.Length; i++)
+        {
+            cameraStartPositions[i] = virtualCameras[i].transform.position; // Zapamiętaj początkową pozycję
+            cameraBasePositions[i] = cameraStartPositions[i]; // Bazowa = początkowa
+        }
     }
 
     // Update is called once per frame
@@ -72,17 +90,17 @@ public class CameraManager : MonoBehaviour
             {
                 if (inLowerCamera)
                 {
-                    // Z dolnej kamery: D przenosi nas na prawą kamerę (index 2)
+                    // Z dolnej kamery: D przenosi nas na prawą kamerę (index 3)
                     SetLowerCameraActive(false);
-                    currentIndex = 2;
+                    currentIndex = 3;
                     ActivateCamera(currentIndex);
                     StartCoroutine(PlayTransitionEffect());
                     StartCoroutine(InputCooldown());
                 }
-                else if (currentIndex < virtualCameras.Length - 1)
+                else
                 {
-                    // Ze zwykłych kamer: przesuwamy w prawo
-                    currentIndex++;
+                    // Ze zwykłych kamer: przesuwamy w prawo z zapętleniem
+                    currentIndex = (currentIndex + 1) % virtualCameras.Length;
                     ActivateCamera(currentIndex);
                     StartCoroutine(PlayTransitionEffect());
                     StartCoroutine(InputCooldown());
@@ -95,17 +113,17 @@ public class CameraManager : MonoBehaviour
             {
                 if (inLowerCamera)
                 {
-                    // Z dolnej kamery: A przenosi nas na lewą kamerę (index 0)
+                    // Z dolnej kamery: A przenosi nas na lewą kamerę (index 1)
                     SetLowerCameraActive(false);
-                    currentIndex = 0;
+                    currentIndex = 1;
                     ActivateCamera(currentIndex);
                     StartCoroutine(PlayTransitionEffect());
                     StartCoroutine(InputCooldown());
                 }
-                else if (currentIndex > 0)
+                else
                 {
-                    // Ze zwykłych kamer: przesuwamy w lewo
-                    currentIndex--;
+                    // Ze zwykłych kamer: przesuwamy w lewo z zapętleniem
+                    currentIndex = (currentIndex - 1 + virtualCameras.Length) % virtualCameras.Length;
                     ActivateCamera(currentIndex);
                     StartCoroutine(PlayTransitionEffect());
                     StartCoroutine(InputCooldown());
@@ -113,7 +131,7 @@ public class CameraManager : MonoBehaviour
             }
         }
 
-        // Wejście/wyjście do dolnej kamery przy S, tylko gdy jesteśmy na środkowej kamerze (index 1)
+        // Wejście/wyjście do dolnej kamery przy S, tylko gdy jesteśmy na lewej kamerze (index 1)
         if (Input.GetKeyDown(KeyCode.S))
         {
             if (canSwitchCamera && currentIndex == 1)
@@ -140,6 +158,55 @@ public class CameraManager : MonoBehaviour
                 StartCoroutine(InputCooldown());
             }
         }
+
+        // Obsługa follow cursora
+        if (enableCursorFollow && !inLowerCamera)
+        {
+            UpdateCursorFollow();
+        }
+    }
+
+    /// <summary>
+    /// Oblicza pozycję kursora i lekko przesuwają kamerę w stronę kursora (z limitem)
+    /// </summary>
+    private void UpdateCursorFollow()
+    {
+        if (virtualCameras == null || virtualCameras.Length == 0) return;
+
+        var activeCamera = virtualCameras[currentIndex];
+        if (activeCamera == null) return;
+
+        Camera mainCam = Camera.main;
+        if (mainCam == null) return;
+
+        // Pozycja kursora w viewport (0-1, gdzie 0.5, 0.5 to center)
+        Vector3 mousePos = Input.mousePosition;
+        Vector3 viewportPos = mainCam.ScreenToViewportPoint(mousePos);
+
+        // Wyliczamy odchylenie od center (0.5, 0.5)
+        float offsetX = (viewportPos.x - 0.5f) * 2f; // -1 do 1
+        float offsetY = (viewportPos.y - 0.5f) * 2f; // -1 do 1
+
+        // Ograniczamy do maksymalnej odległości
+        offsetX = Mathf.Clamp(offsetX, -1f, 1f);
+        offsetY = Mathf.Clamp(offsetY, -1f, 1f);
+
+        // Używamy lokalnych osi kamery zamiast global
+        // Right (X) i Up (Y) камery to osie na ekranie
+        Vector3 cameraRight = activeCamera.transform.right;
+        Vector3 cameraUp = activeCamera.transform.up;
+
+        // Wyliczamy offset bazując na lokalnych osiach kamery
+        Vector3 targetOffset = (cameraRight * offsetX + cameraUp * offsetY) * cursorFollowMaxOffset;
+
+        // Target pozycja = bazowa pozycja + offset
+        Vector3 basePos = cameraBasePositions[currentIndex];
+        Vector3 targetPos = basePos + targetOffset;
+
+        // Lerp z bazy + offsetu (nie akumulujemy!)
+        Vector3 currentPos = activeCamera.transform.position;
+        Vector3 newPos = Vector3.Lerp(currentPos, targetPos, Time.deltaTime * cursorFollowSpeed);
+        activeCamera.transform.position = newPos;
     }
 
     private IEnumerator InputCooldown()
@@ -162,6 +229,14 @@ public class CameraManager : MonoBehaviour
                 virtualCameras[i].gameObject.SetActive(i == index);
             }
         }
+
+        // Resetuj kamerę do jej początkowej pozycji (bez akumulowanego offsetu)
+        if (cameraStartPositions != null && index < cameraStartPositions.Length)
+        {
+            virtualCameras[index].transform.position = cameraStartPositions[index];
+            // Resetuj bazową pozycję na początkową
+            cameraBasePositions[index] = cameraStartPositions[index];
+        }
     }
 
     private void SetLowerCameraActive(bool isActive)
@@ -172,7 +247,7 @@ public class CameraManager : MonoBehaviour
 
         if (isActive)
         {
-            // Wejście do dolnej kamery — wyłącz środkową, włącz dolną z wyższym priorytetem
+            // Wejście do dolnej kamery — wyłącz lewą, włącz dolną z wyższym priorytetem
             if (virtualCameras != null && virtualCameras.Length > 1 && virtualCameras[1] != null)
             {
                 virtualCameras[1].Priority = inactiveCameraPriority;
@@ -185,13 +260,13 @@ public class CameraManager : MonoBehaviour
         }
         else
         {
-            // Wyjście z dolnej kamery — wyłącz dolną, przywróć środkową
+            // Wyjście z dolnej kamery — wyłącz dolną, przywróć lewą
             lowerCamera.Priority = inactiveCameraPriority;
             lowerCamera.gameObject.SetActive(false);
 
-            // Przywróć środkową kamerę
+            // Przywróć lewą kamerę
             ActivateCamera(currentIndex);
-            Debug.Log("CameraManager: Exited lower camera, returned to middle camera.");
+            //Debug.Log("CameraManager: Exited lower camera, returned to left camera.");
         }
     }
 

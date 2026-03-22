@@ -1,9 +1,18 @@
 using UnityEngine;
 using System.Collections;
 
-public class Cover : MonoBehaviour,I_Interactable
+public class Cover : MonoBehaviour, I_Interactable
 {
+    public enum MovementAxis
+    {
+        Y_Axis, // Góra/Dół
+        X_Axis, // Lewo/Prawo
+        Z_Axis  // Przód/Tył
+    }
+
     bool isCovered = false;
+    [SerializeField] private MovementAxis movementAxis = MovementAxis.Y_Axis; // Wybieralna oś z inspektora
+    [SerializeField] private bool flipAxis = false; // Odwróć kierunek (np. -Y zamiast +Y)
     public float coverMoveDistance = 0.5f;
     public float movementDuration = 0.5f; // czas trwania interpolacji (w sekundach)
     private bool isMoving = false; // flaga, żeby uniknąć wielokrotnych ruchów jednocześnie
@@ -19,28 +28,42 @@ public class Cover : MonoBehaviour,I_Interactable
 
     private void MoveCover()
     {
-        Vector3 targetPosition;
+        Vector3 targetPosition = transform.localPosition;
         
         if (isCovered)
         {
-            // Jeśli już przykryty, przejdź w górę (odkryj)
-            targetPosition = new Vector3(
-                transform.localPosition.x, 
-                transform.localPosition.y + coverMoveDistance, 
-                transform.localPosition.z
-            );
+            // Jeśli już przykryty, przejdź w kierunku pozytywnym (odkryj)
+            targetPosition += GetAxisDirection() * coverMoveDistance;
         }
         else
         {
-            // Jeśli odkryty, przejdź w dół (przykryj)
-            targetPosition = new Vector3(
-                transform.localPosition.x, 
-                transform.localPosition.y - coverMoveDistance, 
-                transform.localPosition.z
-            );
+            // Jeśli odkryty, przejdź w kierunku negatywnym (przykryj)
+            targetPosition -= GetAxisDirection() * coverMoveDistance;
         }
         
         StartCoroutine(InterpolateMovement(targetPosition, movementDuration));
+    }
+
+    /// <summary>
+    /// Zwraca wektor kierunku na podstawie wybranej osi
+    /// </summary>
+    private Vector3 GetAxisDirection()
+    {
+        Vector3 direction = movementAxis switch
+        {
+            MovementAxis.X_Axis => Vector3.right,  // (1, 0, 0)
+            MovementAxis.Y_Axis => Vector3.up,     // (0, 1, 0)
+            MovementAxis.Z_Axis => Vector3.forward,// (0, 0, 1)
+            _ => Vector3.up
+        };
+
+        // Jeśli flipAxis jest włączony, odwróć kierunek
+        if (flipAxis)
+        {
+            direction *= -1f;
+        }
+
+        return direction;
     }
 
     private IEnumerator InterpolateMovement(Vector3 targetPosition, float duration)
