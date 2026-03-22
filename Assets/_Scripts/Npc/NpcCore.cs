@@ -56,6 +56,7 @@ public class NpcCore : MonoBehaviour, I_Interactable
     [SerializeField] private bool isMoving;
     [SerializeField] private bool isIdle;
     [SerializeField] public bool finished;
+    [SerializeField] private bool isWalkingOut;
 
     [SerializeField] public bool waiting;
     [SerializeField] private float WaitTimer;
@@ -178,6 +179,7 @@ public class NpcCore : MonoBehaviour, I_Interactable
 
             if (WaitTimer <= 0f)
             {
+                isWalkingOut = true;
                 walkOutBad.RunInteraction();
                 /*
                 waiting = false;
@@ -205,6 +207,7 @@ public class NpcCore : MonoBehaviour, I_Interactable
             if (heldItem != null && heldItem.itemType == zamowienie[0].produkt)
             {
                 waiting = false;
+                isWalkingOut = true;
                 walkoutGood.RunInteraction();
 
             }
@@ -220,6 +223,7 @@ public class NpcCore : MonoBehaviour, I_Interactable
     }
     public void StartWalkingOutBehaviour()
     {
+        isWalkingOut = true;
         StartMovementToTarget(transform.position, GoOutTarget, WalkOutTime);
     }
 
@@ -230,17 +234,32 @@ public class NpcCore : MonoBehaviour, I_Interactable
         movementElapsedTime += Time.deltaTime;
         float normalizedTime = Mathf.Clamp01(movementElapsedTime / WalkTime);
 
-        // Evaluate curve from 0 to 1
-        float curveValue = walkEanEase.Evaluate(normalizedTime);
-
-        // Interpolate position
-        transform.position = Vector3.Lerp(startPosition, targetPosition, curveValue);
-
-        // Apply visual effects to body
-        if (bodyVisual != null)
+        if (isWalkingOut)
         {
-            ApplyWobble(normalizedTime);
-            ApplyTilt(normalizedTime);
+            // Use inverted animation curves for walk-out
+            float invertedTime = 1f - normalizedTime;
+            float curveValue = walkEanEase.Evaluate(invertedTime);
+            transform.position = Vector3.Lerp(startPosition, targetPosition, normalizedTime);
+
+            // Apply visual effects with inverted curves
+            if (bodyVisual != null)
+            {
+                ApplyWobble(invertedTime);
+                ApplyTilt(invertedTime);
+            }
+        }
+        else
+        {
+            // Normal walk-in with easing and effects
+            float curveValue = walkEanEase.Evaluate(normalizedTime);
+            transform.position = Vector3.Lerp(startPosition, targetPosition, curveValue);
+
+            // Apply visual effects to body
+            if (bodyVisual != null)
+            {
+                ApplyWobble(normalizedTime);
+                ApplyTilt(normalizedTime);
+            }
         }
 
         // Check if reached target
@@ -250,6 +269,7 @@ public class NpcCore : MonoBehaviour, I_Interactable
             isIdle = true;
             transform.position = targetPosition;
             ResetBodyVisuals();
+            isWalkingOut = false;
         }
     }
 

@@ -3,10 +3,15 @@ using UnityEngine;
 public class BabciaJumScare : CustomNpcInteractions
 {
     public GameObject JumpScare;
-
+    public Transform ThrowCat;
+    bool spawnOne = false;
     public override void RunInteraction()
     {
-        Instantiate(JumpScare, transform.position, Quaternion.identity);
+        if(!spawnOne)
+        {
+            Instantiate(JumpScare, ThrowCat.position, Quaternion.identity);
+            spawnOne = true;
+        }
         npcCore.GoToNextBodyVisual();
       
     }
