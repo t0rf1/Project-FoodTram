@@ -8,7 +8,7 @@ using System.Collections;
 public class ElectronicDevice : MonoBehaviour, I_Interactable
 {
     [Header("Device Settings")]
-    [SerializeField] private bool isEnabled = true; // Czy urządzenie pracuje
+    [SerializeField] private bool isEnabled = false; // Czy urządzenie pracuje
 
     [Header("Food Processing")]
     [SerializeField] private FoodPartType[] acceptedFoodTypes; // Typy potraw które urządzenie przyjmuje

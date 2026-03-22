@@ -56,6 +56,8 @@ public class CursorSettings : MonoBehaviour
         if (cursorHeldItemDisplay != null)
         {
             heldItemRectTransform = cursorHeldItemDisplay.GetComponent<RectTransform>();
+            // Wyłącz slot na trzymany item na starcie (aby nie pokazywał białego boxa)
+            cursorHeldItemDisplay.enabled = false;
         }
 
         // Ustaw domyślny kursor
