@@ -25,6 +25,8 @@ public enum SkladnikType
     paprykarz,
 
     sorowka,
+    frytkimroz,
+    
 }
 
 /// <summary>
@@ -198,6 +200,9 @@ public class FoodComposer : MonoBehaviour, I_Interactable
             transform  // Jako child tego obiektu
         );
 
+        // Upewnij się że produkt jest aktywny
+        finishedProduct.SetActive(true);
+
         // Ustaw tag żeby nie był usuwany przez ClearFoodChildren()
         finishedProduct.tag = "finishedFood";
 
@@ -267,12 +272,13 @@ public class FoodComposer : MonoBehaviour, I_Interactable
             {
                 // Przydzielamy do kursora
                 cursorSettings.heldItem = finishedFoodItem;
+                // Aktualizuj sprite w kursorze
+                cursorSettings.UpdateHeldItemTexture();
                 Debug.Log("FoodComposer: Podniesiono gotowy produkt " + currentFinishedFood.foodType);
 
-                // Usuwamy produkt z deski
-                //Destroy(currentFinishedFood.gameObject);
-                currentFinishedFood.gameObject.SetActive(false); // Ukrywamy zamiast niszczyć, żeby zachować referencję
-                //currentFinishedFood = null;
+                // Niszczymy produkt z deski
+                Destroy(currentFinishedFood.gameObject);
+                currentFinishedFood = null;
 
                 // Resetujemy inne dane (ale nie czyszczmy wszystkiego)
                 ingredientsAdded = 0;

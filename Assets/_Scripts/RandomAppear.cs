@@ -180,11 +180,24 @@ public class RandomAppear : MonoBehaviour
 
     /// <summary>
     /// Pobiera bieżący indeks kamery - używa refleksji bo pole je private
+    /// Zwraca 4 dla dolnej kamery jeśli jest aktywna
     /// </summary>
     private int GetCurrentCameraIndex()
     {
         try
         {
+            // Sprawdź czy jesteśmy na dolnej kamerze
+            var inLowerCameraField = cameraManager.GetType().GetField("inLowerCamera", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            if (inLowerCameraField != null)
+            {
+                bool inLowerCamera = (bool)inLowerCameraField.GetValue(cameraManager);
+                if (inLowerCamera)
+                {
+                    return 4; // Indeks dolnej kamery
+                }
+            }
+
+            // Jeśli nie na dolnej, pobierz normalny indeks kamery
             var field = cameraManager.GetType().GetField("currentIndex", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
             if (field != null)
             {

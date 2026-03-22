@@ -19,13 +19,13 @@ public class RandomAppearChild : MonoBehaviour
     [SerializeField] private CameraPages enabledPages = CameraPages.Front;
     [SerializeField] private float appearChance = 0.1f; // Szansa pojawienia się na tej kamerze
 
-    private Vector3 initialLocalPosition; // Zapamiętana pozycja startowa (lokalna względem rodzica)
-    private Vector3 initialWorldPosition; // Zapamiętana pozycja startowa (globalna)
+    private Vector3 initialWorldPosition; // Zapamiętana pozycja startowa (światowa)
 
     private void Awake()
     {
-        // Zapamiętaj pozycję przed wyłączeniem obiektu
-        initialLocalPosition = transform.localPosition;
+        // Zapamiętaj pozycję światową przed wyłączeniem obiektu
+        // To gwarantuje że pozycja będzie taka sama niezależnie od pozycji rodzica
+        initialWorldPosition = transform.position;
     }
 
     /// <summary>
@@ -53,10 +53,10 @@ public class RandomAppearChild : MonoBehaviour
     }
 
     /// <summary>
-    /// Resetuje pozycję obiektu do początkowej
+    /// Resetuje pozycję obiektu do początkowej (światowej)
     /// </summary>
     public void ResetToInitialPosition()
     {
-        transform.localPosition = initialLocalPosition;
+        transform.position = initialWorldPosition;
     }
 }
