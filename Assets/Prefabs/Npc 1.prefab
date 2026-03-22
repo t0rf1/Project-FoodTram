@@ -250,12 +250,14 @@ MonoBehaviour:
   - produkt: 6
     skladnikType: 0
   heldItem: {fileID: 0}
+  clicked: 0
   wobbleAmplitude: 0.12
   wobbleFrequency: 4
   maxTiltAngle: 21.21
   isMoving: 0
   isIdle: 0
   finished: 0
+  isWalkingOut: 0
   waiting: 0
   WaitTimer: 0
   bodyvisualIndex: -1
@@ -320,6 +322,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Interactable
   ObjectToInteractWith: {fileID: 0}
+  isHold: 0
+  hoverActivation: 0
 --- !u!1 &3971103408507255012
 GameObject:
   m_ObjectHideFlags: 0
@@ -616,7 +620,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: c5db8e366ffb07d468b54887d3a7136d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d2e6e16fe1bb5094b9597c57261be4c1, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

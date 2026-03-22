@@ -158,12 +158,14 @@ MonoBehaviour:
   - produkt: 6
     skladnikType: 0
   heldItem: {fileID: 0}
+  clicked: 0
   wobbleAmplitude: 0.12
   wobbleFrequency: 6
   maxTiltAngle: 20
   isMoving: 0
   isIdle: 0
   finished: 0
+  isWalkingOut: 0
   waiting: 0
   WaitTimer: 0
   bodyvisualIndex: -1
@@ -230,6 +232,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Interactable
   ObjectToInteractWith: {fileID: 0}
+  isHold: 0
+  hoverActivation: 0
 --- !u!1 &3971103408507255012
 GameObject:
   m_ObjectHideFlags: 0
@@ -347,9 +351,9 @@ Transform:
   m_GameObject: {fileID: 5122293456279756129}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.5, y: 0.061, z: -0.51}
-  m_LocalScale: {x: 0.14373684, y: 0.05388383, z: 0.2071898}
-  m_ConstrainProportionsScale: 0
+  m_LocalPosition: {x: 0.18, y: -0.038, z: -0.51}
+  m_LocalScale: {x: 0.47, y: 0.17619282, z: 0.6774826}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 3143774204257431655}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -402,7 +406,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: 2b4b5c435a0734f4cadef3fa168d9ae0, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 40a7d9953026a1c47a3297550a883ba9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

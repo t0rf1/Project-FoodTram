@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class ZulAction : CustomNpcInteractions
 {
-    public float despawnTime = 2f;
+    public float despawnTime = 1f;
     public float panSpeed = 2f;
     Cover coverDetect;
     public GameObject JumpScare;

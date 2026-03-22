@@ -41,6 +41,7 @@ public class NpcCore : MonoBehaviour, I_Interactable
     public List<Zamowienie> zamowienie;
 
     public HoldedItem heldItem;
+    public bool clicked;
 
     // Wobble parameters
     public float wobbleAmplitude = 0.3f;
@@ -204,7 +205,7 @@ public class NpcCore : MonoBehaviour, I_Interactable
             
 
 
-            if (heldItem != null && heldItem.itemType == zamowienie[0].produkt)
+            if (clicked)
             {
                 waiting = false;
                 isWalkingOut = true;
@@ -308,6 +309,8 @@ public class NpcCore : MonoBehaviour, I_Interactable
 
     public void Interact()
     {
+        clicked = true;
+        /*
         if (CursorSettings.Instance.heldItem != null)
         {
 
@@ -323,7 +326,7 @@ public class NpcCore : MonoBehaviour, I_Interactable
         else
         {
             Debug.Log("Kosz: Nie trzymasz żadnego przedmiotu do wyrzucenia!");
-        }
+        }*/
 
     }
 }
