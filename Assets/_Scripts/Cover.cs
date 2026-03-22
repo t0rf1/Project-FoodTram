@@ -12,7 +12,7 @@ public class Cover : MonoBehaviour, I_Interactable
     [SerializeField] private MovementAxis movementAxis = MovementAxis.Y_Axis; // Wybieralna oś z inspektora
     [SerializeField] private bool flipAxis = false; // Odwróć kierunek (np. -Y zamiast +Y)
 
-    bool isCovered = false;
+    public bool isCovered = false;
     public float coverMoveDistance = 0.5f;
     public float movementDuration = 0.5f; // czas trwania interpolacji (w sekundach)
     private bool isMoving = false; // flaga, żeby uniknąć wielokrotnych ruchów jednocześnie

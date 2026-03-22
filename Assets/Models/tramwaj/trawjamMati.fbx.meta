@@ -9,21 +9,6 @@ ModelImporter:
       assembly: UnityEngine.CoreModule
       name: Foodtrucktrimsheet
     second: {fileID: 2100000, guid: cd6984750dbeabc4e8cbd1246aa817e6, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Material.001
-    second: {fileID: 2100000, guid: e59e86d33c575754d99764dd73fe6b4c, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Material.002
-    second: {fileID: 2100000, guid: 96bb402e352f61648932b9b4bb24b9d7, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Material.003
-    second: {fileID: 2100000, guid: 684307566d2560e41bece8cbccb049ac, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

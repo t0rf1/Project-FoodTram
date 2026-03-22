@@ -26,6 +26,7 @@ public enum SkladnikType
 
     sorowka,
     frytkimroz,
+    pasztecik,
     
 }
 
