@@ -9,7 +9,9 @@ public class BabciaJumScare : CustomNpcInteractions
     {
         if(!spawnOne)
         {
-            Instantiate(JumpScare, ThrowCat.position, Quaternion.identity);
+            Transform g = GameObject.FindGameObjectWithTag("CatForcedPosition").transform;
+           
+            Instantiate(JumpScare, g.position, Quaternion.identity);
             spawnOne = true;
         }
         npcCore.GoToNextBodyVisual();
